@@ -60,6 +60,16 @@ app.put("/todos/:id", (req, res) => {
 
   todo.description = req.body.description
   todo.done = req.body.done
+
+  res.send(todo);
+});
+
+app.delete("/todos/:id", (req, res) => {
+  const todo = todos.find(t => t.id === parseInt(req.params.id));
+  if (!todo) return res.status(404).send("todo not found");
+
+  const index = todos.indexOf(todo)
+  todos.splice(index, 1)
   
   res.send(todo);
 });
