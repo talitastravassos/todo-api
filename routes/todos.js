@@ -1,5 +1,7 @@
 const express = require("express");
-const router = express.Router();
+const app = express();
+
+app.use(express.json())
 
 const todos = [
   {
@@ -24,20 +26,32 @@ const todos = [
   }
 ];
 
-router.use(function(req, res, next) {
+app.use(function(req, res, next) {
   // run for any & all requests
   console.log("Connection to the API.."); // set up logging for every API call
   next(); // ..to the next routes from here..
 });
 
-router.route("/todos").get((req, res) => {
+app.get("/todos", (req, res) => {
   res.send(todos);
 });
 
-router.route("/todos/:id").get((req, res) => {
+app.post('/todos', (req, res) => {
+  // console.log(req.body)
+  const todo = {
+    id: todos.length + 1,
+    description: req.body.description,
+    done: req.body.done
+  }
+
+  todos.push(todo)
+  res.send(todo)
+})
+
+app.get("/todos/:id", (req, res) => {
   const todo = todos.find(t => t.id === parseInt(req.params.id));
-  if (!todo) return res.status(404).send("not found");
+  if (!todo) return res.status(404).send("todo not found");
   res.send(todo);
 });
 
-module.exports = router;
+module.exports = app;
