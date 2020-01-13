@@ -34,5 +34,10 @@ router.route("/todos").get((req, res) => {
   res.send(todos);
 });
 
+router.route("/todos/:id").get((req, res) => {
+  const todo = todos.find(t => t.id === parseInt(req.params.id));
+  if (!todo) return res.status(404).send("not found");
+  res.send(todo);
+});
 
 module.exports = router;
