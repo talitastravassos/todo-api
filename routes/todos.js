@@ -54,4 +54,14 @@ app.get("/todos/:id", (req, res) => {
   res.send(todo);
 });
 
+app.put("/todos/:id", (req, res) => {
+  const todo = todos.find(t => t.id === parseInt(req.params.id));
+  if (!todo) return res.status(404).send("todo not found");
+
+  todo.description = req.body.description
+  todo.done = req.body.done
+  
+  res.send(todo);
+});
+
 module.exports = app;
