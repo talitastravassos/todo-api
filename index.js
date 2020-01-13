@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const morgan = require('morgan')
 const routes = require("./routes");
 
 
@@ -15,6 +16,7 @@ app.use(function(req, res, next) {
 
 app.use('/api', routes);
 app.use(cors());
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 
 app.get('/', (req, res) => {
     res.redirect('/api')
