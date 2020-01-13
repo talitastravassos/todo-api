@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const Joi = require('@hapi/joi');
 
 app.use(express.json())
 
@@ -37,12 +38,14 @@ app.get("/todos", (req, res) => {
 });
 
 app.post('/todos', (req, res) => {
-  // console.log(req.body)
   const todo = {
     id: todos.length + 1,
     description: req.body.description,
     done: req.body.done
   }
+
+  const result = validate(req.body)
+  if (result.error) return res.status(400).send(result.error.details[0].message)
 
   todos.push(todo)
   res.send(todo)
@@ -57,6 +60,9 @@ app.get("/todos/:id", (req, res) => {
 app.put("/todos/:id", (req, res) => {
   const todo = todos.find(t => t.id === parseInt(req.params.id));
   if (!todo) return res.status(404).send("todo not found");
+
+  const result = validate(req.body)
+  if (result.error) return res.status(400).send(result.error.details[0].message)
 
   todo.description = req.body.description
   todo.done = req.body.done
@@ -73,5 +79,14 @@ app.delete("/todos/:id", (req, res) => {
   
   res.send(todo);
 });
+
+function validate(body){
+  const schema = Joi.object({
+    description: Joi.string().min(5).required(),
+    done: Joi.boolean().required()
+  })
+
+  return schema.validate(body)
+}
 
 module.exports = app;
