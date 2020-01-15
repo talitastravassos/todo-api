@@ -71,4 +71,13 @@ router.delete("/todos/:id", async (req, res) => {
   }
 });
 
+router.delete("/todos", async (req, res) => {
+  try {
+    const todo = await Todo.deleteMany({ done: true }); 
+    res.send(todo);
+  } catch (error) {
+    return res.status(404).send(error);
+  }
+});
+
 module.exports = router;
