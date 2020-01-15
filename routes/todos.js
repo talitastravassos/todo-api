@@ -1,10 +1,7 @@
 const express = require("express");
-const app = express();
+const router = express.Router();
 const Joi = require("@hapi/joi");
-const morgan = require('morgan')
-
-app.use(express.json());
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+const morgan = require("morgan");
 
 const todos = [
   {
@@ -29,16 +26,14 @@ const todos = [
   }
 ];
 
-app.use(function(req, res, next) {
-  console.log("Connection to the API..");
-  next();
-});
+router.use(express.json());
+router.use(morgan("tiny"));
 
-app.get("/todos", (req, res) => {
+router.get("/todos", (req, res) => {
   res.send(todos);
 });
 
-app.post("/todos", (req, res) => {
+router.post("/todos", (req, res) => {
   const todo = {
     id: todos.length + 1,
     description: req.body.description,
@@ -53,13 +48,13 @@ app.post("/todos", (req, res) => {
   res.send(todo);
 });
 
-app.get("/todos/:id", (req, res) => {
+router.get("/todos/:id", (req, res) => {
   const todo = todos.find(t => t.id === parseInt(req.params.id));
   if (!todo) return res.status(404).send("todo not found");
   res.send(todo);
 });
 
-app.put("/todos/:id", (req, res) => {
+router.put("/todos/:id", (req, res) => {
   const todo = todos.find(t => t.id === parseInt(req.params.id));
   if (!todo) return res.status(404).send("todo not found");
 
@@ -73,7 +68,7 @@ app.put("/todos/:id", (req, res) => {
   res.send(todo);
 });
 
-app.delete("/todos/:id", (req, res) => {
+router.delete("/todos/:id", (req, res) => {
   const todo = todos.find(t => t.id === parseInt(req.params.id));
   if (!todo) return res.status(404).send("todo not found");
 
@@ -94,4 +89,4 @@ function validate(body) {
   return schema.validate(body);
 }
 
-module.exports = app;
+module.exports = router;

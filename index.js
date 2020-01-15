@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const morgan = require('morgan')
+const morgan = require("morgan");
+const mongoose = require("mongoose");
 const routes = require("./routes");
 
+require("dotenv").config();
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -14,13 +16,21 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use('/api', routes);
-app.use(cors());
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+mongoose.connect(
+  `mongodb+srv://admin:${process.env.MONGODB_ADMIN_PASSWORD}@cluster0-ufzlr.mongodb.net/test?retryWrites=true&w=majority`,
+  { useNewUrlParser: true, useUnifiedTopology: true }
+);
+mongoose.connection.once("open", () => {
+  console.log("connected to database");
+});
 
-app.get('/', (req, res) => {
-    res.redirect('/api')
-})
+app.use("/api", routes);
+app.use(cors());
+app.use(morgan("tiny"));
+
+app.get("/", (req, res) => {
+  res.redirect("/api");
+});
 
 app.get("/api", (req, res) => {
   res.send("Todo API");
