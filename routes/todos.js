@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const Joi = require("@hapi/joi");
 const morgan = require("morgan");
 const Todo = require("../schemas/todo");
+const validate = require("../scripts/validate")
 
 router.use(express.json());
 router.use(morgan("tiny"));
@@ -70,17 +70,5 @@ router.delete("/todos/:id", async (req, res) => {
     return res.status(404).send(error);
   }
 });
-
-function validate(body) {
-  const schema = Joi.object({
-    description: Joi.string()
-      .min(5)
-      .required(),
-    done: Joi.boolean(),
-    date: Joi.date()
-  });
-
-  return schema.validate(body);
-}
 
 module.exports = router;
