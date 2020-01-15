@@ -65,18 +65,23 @@ router.get("/todos/:id", async (req, res) => {
   }
 });
 
-router.put("/todos/:id", (req, res) => {
-  const todo = todos.find(t => t.id === parseInt(req.params.id));
-  if (!todo) return res.status(404).send("todo not found");
-
+router.put("/todos/:id", async (req, res) => {
   const result = validate(req.body);
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
 
-  todo.description = req.body.description;
-  todo.done = req.body.done;
+  try {
+    const todo = await Todo.findById(req.params.id);
 
-  res.send(todo);
+    todo.description = req.body.description;
+    todo.done = req.body.done;
+
+    const resultMongoUpdate = await todo.save();
+
+    res.send(resultMongoUpdate);
+  } catch (error) {
+    return res.status(404).send(error);
+  }
 });
 
 router.delete("/todos/:id", (req, res) => {
@@ -93,7 +98,9 @@ function validate(body) {
   const schema = Joi.object({
     description: Joi.string()
       .min(5)
-      .required()
+      .required(),
+    done: Joi.boolean(),
+    date: Joi.date()
   });
 
   return schema.validate(body);
