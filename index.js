@@ -17,7 +17,7 @@ app.use(function(req, res, next) {
 });
 
 mongoose.connect(
-  `mongodb+srv://admin:${process.env.MONGODB_ADMIN_PASSWORD}@cluster0-ufzlr.mongodb.net/test?retryWrites=true&w=majority`,
+  `mongodb+srv://admin:${process.env.MONGODB_ADMIN_PASSWORD}@cluster0-ufzlr.mongodb.net/todos-api?retryWrites=true&w=majority`,
   { useNewUrlParser: true, useUnifiedTopology: true }
 );
 

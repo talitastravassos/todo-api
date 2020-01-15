@@ -4,34 +4,40 @@ const Joi = require("@hapi/joi");
 const morgan = require("morgan");
 const Todo = require("../schemas/todo");
 
-const todos = [
-  {
-    id: 1,
-    done: true,
-    description: "teste"
-  },
-  {
-    id: 2,
-    done: false,
-    description: "teste"
-  },
-  {
-    id: 3,
-    done: false,
-    description: "teste"
-  },
-  {
-    id: 4,
-    done: true,
-    description: "teste"
-  }
-];
+// const todos = [
+//   {
+//     id: 1,
+//     done: true,
+//     description: "teste"
+//   },
+//   {
+//     id: 2,
+//     done: false,
+//     description: "teste"
+//   },
+//   {
+//     id: 3,
+//     done: false,
+//     description: "teste"
+//   },
+//   {
+//     id: 4,
+//     done: true,
+//     description: "teste"
+//   }
+// ];
 
 router.use(express.json());
 router.use(morgan("tiny"));
 
-router.get("/todos", (req, res) => {
-  res.send(todos);
+router.get("/todos", async (req, res) => {
+  try {
+    const todos = await Todo.find();
+
+    res.send(todos);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.post("/todos", async (req, res) => {
@@ -47,10 +53,16 @@ router.post("/todos", async (req, res) => {
   res.send(resultMongoDB);
 });
 
-router.get("/todos/:id", (req, res) => {
-  const todo = todos.find(t => t.id === parseInt(req.params.id));
-  if (!todo) return res.status(404).send("todo not found");
-  res.send(todo);
+router.get("/todos/:id", async (req, res) => {
+  try {
+    const todo = await Todo.findById(req.params.id);
+
+    res.send(todo);
+  } catch (error) {
+    res.status(404).send(error);
+
+    console.log(error);
+  }
 });
 
 router.put("/todos/:id", (req, res) => {
