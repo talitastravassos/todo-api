@@ -20,6 +20,7 @@ mongoose.connect(
   `mongodb+srv://admin:${process.env.MONGODB_ADMIN_PASSWORD}@cluster0-ufzlr.mongodb.net/test?retryWrites=true&w=majority`,
   { useNewUrlParser: true, useUnifiedTopology: true }
 );
+
 mongoose.connection.once("open", () => {
   console.log("connected to database");
 });
