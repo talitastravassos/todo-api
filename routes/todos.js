@@ -4,36 +4,12 @@ const Joi = require("@hapi/joi");
 const morgan = require("morgan");
 const Todo = require("../schemas/todo");
 
-// const todos = [
-//   {
-//     id: 1,
-//     done: true,
-//     description: "teste"
-//   },
-//   {
-//     id: 2,
-//     done: false,
-//     description: "teste"
-//   },
-//   {
-//     id: 3,
-//     done: false,
-//     description: "teste"
-//   },
-//   {
-//     id: 4,
-//     done: true,
-//     description: "teste"
-//   }
-// ];
-
 router.use(express.json());
 router.use(morgan("tiny"));
 
 router.get("/todos", async (req, res) => {
   try {
     const todos = await Todo.find();
-
     res.send(todos);
   } catch (error) {
     console.log(error);
@@ -49,19 +25,21 @@ router.post("/todos", async (req, res) => {
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
 
-  const resultMongoDB = await todo.save();
-  res.send(resultMongoDB);
+  try {
+    const resultMongoDB = await todo.save();
+    res.send(resultMongoDB);
+  } catch (error) {
+    return res.status(400).send(error);
+  }  
 });
 
 router.get("/todos/:id", async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);
-
     res.send(todo);
   } catch (error) {
     res.status(404).send(error);
-
-    console.log(error);
+    // console.log(error);
   }
 });
 
@@ -84,14 +62,13 @@ router.put("/todos/:id", async (req, res) => {
   }
 });
 
-router.delete("/todos/:id", (req, res) => {
-  const todo = todos.find(t => t.id === parseInt(req.params.id));
-  if (!todo) return res.status(404).send("todo not found");
-
-  const index = todos.indexOf(todo);
-  todos.splice(index, 1);
-
-  res.send(todo);
+router.delete("/todos/:id", async (req, res) => {
+  try {
+    const todo = await Todo.findByIdAndDelete(req.params.id); 
+    res.send(todo);
+  } catch (error) {
+    return res.status(404).send(error);
+  }
 });
 
 function validate(body) {
