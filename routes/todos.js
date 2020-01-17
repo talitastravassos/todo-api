@@ -1,11 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const path = require("path");
 const morgan = require("morgan");
 const Todo = require("../schemas/todo");
 const validate = require("../scripts/validate")
 
 router.use(express.json());
 router.use(morgan("tiny"));
+
+router.get("/", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../public/index.html"));
+});
 
 router.get("/todos", async (req, res) => {
   try {

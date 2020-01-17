@@ -33,10 +33,6 @@ app.get("/", (req, res) => {
   res.redirect("/api");
 });
 
-app.get("/api", (req, res) => {
-  res.send("Todo API");
-});
-
 const port = process.env.PORT || 4000;
 
 app.listen(port, () => console.log(`listening on port ${port}`));
