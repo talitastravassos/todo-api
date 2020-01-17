@@ -16,10 +16,10 @@ app.use(function(req, res, next) {
   next();
 });
 
-mongoose.connect(
-  `mongodb+srv://admin:${process.env.MONGODB_ADMIN_PASSWORD}@cluster0-ufzlr.mongodb.net/todos-api?retryWrites=true&w=majority`,
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 mongoose.connection.once("open", () => {
   console.log("connected to database");
