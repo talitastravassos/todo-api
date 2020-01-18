@@ -58,6 +58,7 @@ router.put("/todos/:id", async (req, res) => {
 
     todo.description = req.body.description;
     todo.done = req.body.done;
+    todo.date = new Date();
 
     const resultMongoUpdate = await todo.save();
 
